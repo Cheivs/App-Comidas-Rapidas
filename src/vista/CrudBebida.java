@@ -1,26 +1,33 @@
 
 package vista;
 
-import conexion.Conexion;
-import java.util.ArrayList;
+
+import controlador.ControladorBebidas;
+import static controlador.ControladorInicioSesion.rolUsuario;
 import javax.swing.JOptionPane;
-import controlador.productos.Bebidas;
-import java.sql.*;
+import modelo.productos.Bebidas;
 import javax.swing.table.DefaultTableModel;
 
 public class CrudBebida extends javax.swing.JPanel {
 
-    Conexion cn = new Conexion();
-    Connection con;
     DefaultTableModel model;
-    Statement st;
-    ResultSet rs;
     int id = 0;
     
-    ArrayList <Bebidas> bebidas = new ArrayList();
     public CrudBebida() {
         initComponents();
-        listar();
+        ControladorBebidas.listar(tablaBebidas, model);
+        
+        if(rolUsuario == 2){
+            jButton10.setEnabled(false);
+            jButton2.setEnabled(false);
+            jButton11.setEnabled(false);
+            jButton5.setEnabled(false);
+        } else {
+            jButton10.setEnabled(true);
+            jButton2.setEnabled(true);
+            jButton11.setEnabled(true);
+            jButton5.setEnabled(true);
+        }
     }
 
     /**
@@ -52,53 +59,62 @@ public class CrudBebida extends javax.swing.JPanel {
 
         jLabel4.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel4.setText("Nombre:");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, -1, 20));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 50, -1, 20));
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 40, 150, -1));
+        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 50, 150, -1));
 
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 70, 150, -1));
+        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, 150, -1));
 
         jLabel5.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel5.setText("Costo de la paqueta:");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, -1, 20));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 80, -1, 20));
 
         jLabel6.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel6.setText("Utilidad:");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, -1, 20));
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 110, -1, 20));
 
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField3ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 100, 150, -1));
+        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 110, 150, -1));
 
         jLabel3.setBackground(new java.awt.Color(255, 255, 255));
         jLabel3.setFont(new java.awt.Font("Tw Cen MT", 1, 20)); // NOI18N
         jLabel3.setText("Bebidas");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 20, -1, -1));
 
         tablaBebidas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Nombre", "Valor Unitario"
+                "ID", "Nombre", "Costo Paqueta", "Utilidad", "Valor Unitario"
             }
         ));
+        tablaBebidas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaBebidasMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tablaBebidas);
+        if (tablaBebidas.getColumnModel().getColumnCount() > 0) {
+            tablaBebidas.getColumnModel().getColumn(0).setMinWidth(50);
+            tablaBebidas.getColumnModel().getColumn(0).setMaxWidth(50);
+        }
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, 170));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 210, -1, 170));
 
         jButton2.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/add_user.png"))); // NOI18N
@@ -108,7 +124,7 @@ public class CrudBebida extends javax.swing.JPanel {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, -1));
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 150, -1, -1));
 
         jButton5.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/search.png"))); // NOI18N
@@ -118,7 +134,7 @@ public class CrudBebida extends javax.swing.JPanel {
                 jButton5ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, -1, -1));
+        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 150, -1, -1));
 
         jButton10.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/button_cancel.png"))); // NOI18N
@@ -128,7 +144,7 @@ public class CrudBebida extends javax.swing.JPanel {
                 jButton10ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 140, -1, -1));
+        jPanel1.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 150, -1, -1));
 
         jButton11.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/revert.png"))); // NOI18N
@@ -138,17 +154,17 @@ public class CrudBebida extends javax.swing.JPanel {
                 jButton11ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 140, 110, -1));
+        jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 150, 110, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -166,197 +182,50 @@ public class CrudBebida extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-        Agregar();
-        listar();
-        nuevo();
+        ControladorBebidas.Agregar(jTextField1, jTextField2, jTextField3, model, tablaBebidas);
+        ControladorBebidas.listar(tablaBebidas, model);
+        ControladorBebidas.nuevo(jTextField1, jTextField2, jTextField3);;
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        nuevo();
+        ControladorBebidas.nuevo(jTextField1, jTextField2, jTextField3);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
 
-        eliminar();
-        listar();
-        nuevo();
-
-        /*Cliente clientex = new Cliente();
-
-        int num = Integer.parseInt(JOptionPane.showInputDialog("Digite el cliente a eliminar: "));
-
-        for(int i=0; i<clientes.size(); i++){
-
-            if(clientes.get(i).getNumeroCliente()== num){
-                clientes.remove(i);
-            }
-        }
-        clientex.disminuirContadorClientes();*/
+        ControladorBebidas.eliminar(tablaBebidas, model);
+        ControladorBebidas.listar(tablaBebidas, model);
+        ControladorBebidas.nuevo(jTextField1, jTextField2, jTextField3);
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
 
-        modificar();
-        listar();
-        nuevo();
+        ControladorBebidas.modificar(jTextField1, jTextField2, jTextField3, model, tablaBebidas);
+        ControladorBebidas.listar(tablaBebidas, model);
+        ControladorBebidas.nuevo(jTextField1, jTextField2, jTextField3);
 
-        /*int num = Integer.parseInt(JOptionPane.showInputDialog("Digite el numero del cliente a modificar:"));
-
-        int cambiar = Integer.parseInt(JOptionPane.showInputDialog("1) Cambiar nombre del cliente "
-            + "\n2) Cambiar identificacion del cliente "
-            + "\n3) Cambiar el pedido del cliente "
-            + "\n0) Cancelar "));
-
-    switch(cambiar){
-        case 1:
-        for(int i=0; i<clientes.size(); i++){
-            if(clientes.get(i).getNumeroCliente()== num){
-                String nombre = JOptionPane.showInputDialog("Ingrese el nuevo nombre del cliente: ");
-                clientes.get(i).setNombre(nombre);
-                JOptionPane.showMessageDialog(null, "Registrado correctamente");
-            }
-        }
-        break;
-
-        case 2:
-        for(int i=0; i<clientes.size(); i++){
-            if(clientes.get(i).getNumeroCliente()== num){
-                String identificacion = JOptionPane.showInputDialog("Ingrese la nueva identificacion del cliente: ");
-                clientes.get(i).setIdentificacion(identificacion);
-                JOptionPane.showMessageDialog(null, "Registrado correctamente");
-
-            }
-        }
-        break;
-
-        case 3:
-        for(int i=0; i<clientes.size(); i++){
-            if(clientes.get(i).getNumeroCliente()== num){
-                String pedido = JOptionPane.showInputDialog("Ingrese el nuevo pedido del cliente: ");
-                clientes.get(i).setPedido(pedido);
-                JOptionPane.showMessageDialog(null, "Registrado correctamente");
-
-            }
-        }
-        break;
-
-        }*/
+        
     }//GEN-LAST:event_jButton11ActionPerformed
-    void listar(){
-        String sql = "select * from bebidas";
-        try {
-            con = cn.getConnection();
-            st = con.createStatement();
-            rs = st.executeQuery(sql);
-            Object[] bebida = new Object[3];
-            model = (DefaultTableModel) tablaBebidas.getModel();
-            while (rs.next()) {
-                bebida[0] = rs.getInt("idBebida");
-                bebida[1] = rs.getString("nombreBebida");
-                bebida[2] = rs.getInt("valorUnitario");
-                model.addRow(bebida);
-            }
-            tablaBebidas.setModel(model);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al listar las bebidas: " +e);
-        }
-    }
-    
-    void Agregar(){
-        Bebidas bebidax = new Bebidas();
-        String nombre = jTextField1.getText().trim();
-        int costo = Integer.parseInt(jTextField2.getText().trim());
-        int utilidad =Integer.parseInt(jTextField3.getText().trim());
-        bebidax.setCosto(costo);
-        bebidax.setUtilidad(utilidad);
-        int valorUnitario = bebidax.precio();
-        //System.out.println(nombre+" "+valorUnitario);
-        try {
-            if(nombre.isEmpty() || costo==0|| utilidad ==0){
-                JOptionPane.showMessageDialog(null, "Llena todos los datos");
-                limpiarTabla(model);
-            } else {
-                String sql = "insert into bebidas(nombreBebida, valorUnitario) VALUES('" + nombre + "','" + valorUnitario +"')";
-                con = cn.getConnection();
-                st = con.createStatement();
-                st.executeUpdate(sql);
-                JOptionPane.showMessageDialog(null, "Bebida registrada con exito");
-                
-                limpiarTabla(model);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al agregar la bebida: " +e);
-        }
-    }
-    
-    void modificar(){
-        Bebidas bebidax = new Bebidas();
-        String nombre = jTextField1.getText().trim();
-        int costo = Integer.parseInt(jTextField2.getText().trim());
-        int utilidad =Integer.parseInt(jTextField3.getText().trim());
-        bebidax.setCosto(costo);
-        bebidax.setUtilidad(utilidad);
-        int valorUnitario = bebidax.precio();
-        
-        int fila = tablaBebidas.getSelectedRow();
-        int id = (int) tablaBebidas.getValueAt(fila, 0);
-        
-        String sql = "update bebidas set nombreBebida='" + nombre + "', valorUnitario='" + valorUnitario + "' where idBebida=" + id;
 
-        try {
-            if (nombre != null || costo != 0 || utilidad != 0 || valorUnitario != 0 ){
-                con = cn.getConnection();
-                st = con.createStatement();
-                st.executeUpdate(sql);
-                JOptionPane.showMessageDialog(null, "Bebida Modificada");
-                limpiarTabla(model); //AQUI SALE UN ERROR PERO SI EJECUTA LA OPERACION
-            } else {
-                JOptionPane.showMessageDialog(null, "Error");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al modificar la bebida: " +e);
-        }
-    }
-    
-    void eliminar(){
-        int fila = tablaBebidas.getSelectedRow();
-        int id = (int) tablaBebidas.getValueAt(fila, 0);
-        String sql = "delete from bebidas where idBebida=" + id;
- 
-        if(fila<0){
-            JOptionPane.showMessageDialog(null,"Selecciona una bebida");
+    private void tablaBebidasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaBebidasMouseClicked
+        
+        int row = tablaBebidas.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(null, "No se Selecciono");
         } else {
-            try {
-                con = cn.getConnection();
-                st = con.createStatement();
-                st.executeUpdate(sql);
-                JOptionPane.showMessageDialog(null, "Bebida eliminada");
-                limpiarTabla(model);
-                
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Error al eliminar la bebida: " +e);
-            }
-        }
-    }
+            id = Integer.parseInt((String) tablaBebidas.getValueAt(row, 0).toString());
+            String nombre = (String) tablaBebidas.getValueAt(row, 1);
+            String costo = (String) tablaBebidas.getValueAt(row, 2);
+            String utilidad = (String) tablaBebidas.getValueAt(row, 3);
+            
     
-    void nuevo(){
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");
-        jTextField1.requestFocus();
-    }
-    
-    void limpiarTabla(DefaultTableModel model) {
-        while (model.getRowCount() > 0) {
-            model.removeRow(0);
-        }
-    }
+            jTextField1.setText(nombre);
+            jTextField2.setText(costo);
+            jTextField3.setText(utilidad);
 
-    
-    void Actualizar(){
-        limpiarTabla(model);
-        listar();
-    }
+        }
+    }//GEN-LAST:event_tablaBebidasMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton10;

@@ -1,17 +1,10 @@
 package vista;
 
-import conexion.Conexion;
-import java.sql.*;
-import javax.swing.JOptionPane;
-import encriptacion.EncriptarContraseña;
+import controlador.ControladorInicioSesion;
 
 public class InicioSesion extends javax.swing.JPanel {
 
-    Conexion cn = new Conexion();
-    Connection con;
-    Statement st;
-    ResultSet rs;
-    
+   
     public InicioSesion() {
         initComponents();
 
@@ -76,33 +69,7 @@ public class InicioSesion extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        String correo = jTextField1.getText().trim();
-        String contraseña = jPasswordField1.getText().trim();
-       
-            if(correo.isEmpty() || contraseña.isEmpty()){
-                JOptionPane.showMessageDialog(null, "Llena todos los campos");
-            } else{
-                
-                EncriptarContraseña encriptar = new EncriptarContraseña();
-                String contraEncriptada = encriptar.getMd5Hash(contraseña);
-                
-                try{
-                    con = cn.getConnection();
-                    st = con.createStatement();
-                    rs = st.executeQuery("SELECT correoEmpleado, contraseña, nombreEmpleado FROM empleados WHERE correoEmpleado='" + correo + "' AND contraseña='" + contraEncriptada + "'");
-
-                    if(rs.next()){
-                        JOptionPane.showMessageDialog(null, "Bienvenido " + rs.getString("nombreEmpleado"));
-                        new Inicio().setVisible(true);
-                        
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Datos incorrectos" );
-                    }
-                    
-                } catch (Exception e){
-                    JOptionPane.showMessageDialog(null, "Error al iniciar sesion: " + e);
-                }
-            }
+        ControladorInicioSesion.IniciarSesion(jTextField1, jPasswordField1);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed

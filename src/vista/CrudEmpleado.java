@@ -1,29 +1,38 @@
 
 package vista;
 
-import conexion.Conexion;
-import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
-import java.sql.*;
 import javax.swing.table.DefaultTableModel;
-import controlador.personas.Empleado;
-import encriptacion.EncriptarContraseña;
+import modelo.personas.Empleado;
+import controlador.ControladorEmpleados;
+import controlador.ControladorInicioSesion;
+import static controlador.ControladorInicioSesion.rolUsuario;
 
 
 public class CrudEmpleado extends javax.swing.JPanel {
 
-    Conexion cn = new Conexion();
-    Connection con;
+    
     DefaultTableModel model;
-    Statement st;
-    ResultSet rs;
     int id = 0;
     
     
-    ArrayList <Empleado> proveedores = new ArrayList();
+    
     public CrudEmpleado() {
         initComponents();
-        listar();
+        ControladorEmpleados.listar(model, tablaEmpleados);
+        
+        if(rolUsuario == 2){
+            jButton10.setEnabled(false);
+            jButton2.setEnabled(false);
+            jButton11.setEnabled(false);
+            jButton5.setEnabled(false);
+        } else {
+            jButton10.setEnabled(true);
+            jButton2.setEnabled(true);
+            jButton11.setEnabled(true);
+            jButton5.setEnabled(true);
+        }
     }
 
     /**
@@ -51,46 +60,50 @@ public class CrudEmpleado extends javax.swing.JPanel {
         tablaEmpleados = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
         jPasswordField1 = new javax.swing.JPasswordField();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel5.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel5.setText("Identificación:");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 90, -1, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel7.setText("Correo:");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 120, -1, 10));
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, -1, 10));
 
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 90, 140, -1));
+        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 90, 140, -1));
 
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField3ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 120, 140, 20));
+        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 120, 140, 20));
 
         jLabel3.setFont(new java.awt.Font("Tw Cen MT", 1, 20)); // NOI18N
         jLabel3.setText("Empleados");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 20, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 20, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel4.setText("Nombre:");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 60, -1, -1));
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 60, 140, -1));
+        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 60, 140, -1));
 
         jButton2.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/add_user.png"))); // NOI18N
@@ -100,17 +113,17 @@ public class CrudEmpleado extends javax.swing.JPanel {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 190, -1, -1));
 
         jButton5.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/search.png"))); // NOI18N
-        jButton5.setText("Nuevo");
+        jButton5.setText("Limpiar");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, -1, -1));
+        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 190, -1, -1));
 
         jButton10.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/button_cancel.png"))); // NOI18N
@@ -120,7 +133,7 @@ public class CrudEmpleado extends javax.swing.JPanel {
                 jButton10ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 190, -1, -1));
+        jPanel1.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 190, -1, -1));
 
         jButton11.setFont(new java.awt.Font("Tw Cen MT", 0, 12)); // NOI18N
         jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/revert.png"))); // NOI18N
@@ -130,14 +143,14 @@ public class CrudEmpleado extends javax.swing.JPanel {
                 jButton11ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 190, 110, -1));
+        jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, 110, -1));
 
         tablaEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Nombre", "Cedula", "Correo"
+                "ID", "Nombre", "Cedula", "Tipo Usuario", "Correo"
             }
         ));
         tablaEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -151,22 +164,39 @@ public class CrudEmpleado extends javax.swing.JPanel {
             tablaEmpleados.getColumnModel().getColumn(0).setMaxWidth(50);
         }
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, 450, 150));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 240, 450, 150));
 
         jLabel8.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
         jLabel8.setText("Contraseña:");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, -1, 10));
-        jPanel1.add(jPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 150, 140, -1));
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 150, -1, 10));
+        jPanel1.add(jPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 150, 140, -1));
+
+        jLabel6.setFont(new java.awt.Font("Tw Cen MT", 1, 14)); // NOI18N
+        jLabel6.setText("Id Tipo Usuario:");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 60, -1, -1));
+
+        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField4ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 80, 140, -1));
+
+        jLabel1.setText("2: Usuario");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 130, -1, -1));
+
+        jLabel2.setText("1: Administrador");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 110, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -184,81 +214,28 @@ public class CrudEmpleado extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-        Agregar();
-        listar();
-        nuevo();
+        ControladorEmpleados.Agregar(tablaEmpleados, model, jTextField1, jTextField2, jTextField3, jTextField4, jPasswordField1);
+        ControladorEmpleados.listar(model, tablaEmpleados);
+        ControladorEmpleados.nuevo(jTextField1, jTextField2, jTextField3, jTextField4, jPasswordField1);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        nuevo();
+        ControladorEmpleados.nuevo(jTextField1, jTextField2, jTextField3, jTextField4, jPasswordField1);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
 
-        eliminar();
-        listar();
-        nuevo();
+        ControladorEmpleados.eliminar(tablaEmpleados, model);
+        ControladorEmpleados.listar(model, tablaEmpleados);
+        ControladorEmpleados.nuevo(jTextField1, jTextField2, jTextField3, jTextField4, jPasswordField1);
 
-        /*Cliente clientex = new Cliente();
-
-        int num = Integer.parseInt(JOptionPane.showInputDialog("Digite el cliente a eliminar: "));
-
-        for(int i=0; i<clientes.size(); i++){
-
-            if(clientes.get(i).getNumeroCliente()== num){
-                clientes.remove(i);
-            }
-        }
-        clientex.disminuirContadorClientes();*/
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
 
-        modificar();
-        listar();
-        nuevo();
-
-        /*int num = Integer.parseInt(JOptionPane.showInputDialog("Digite el numero del cliente a modificar:"));
-
-        int cambiar = Integer.parseInt(JOptionPane.showInputDialog("1) Cambiar nombre del cliente "
-            + "\n2) Cambiar identificacion del cliente "
-            + "\n3) Cambiar el pedido del cliente "
-            + "\n0) Cancelar "));
-
-    switch(cambiar){
-        case 1:
-        for(int i=0; i<clientes.size(); i++){
-            if(clientes.get(i).getNumeroCliente()== num){
-                String nombre = JOptionPane.showInputDialog("Ingrese el nuevo nombre del cliente: ");
-                clientes.get(i).setNombre(nombre);
-                JOptionPane.showMessageDialog(null, "Registrado correctamente");
-            }
-        }
-        break;
-
-        case 2:
-        for(int i=0; i<clientes.size(); i++){
-            if(clientes.get(i).getNumeroCliente()== num){
-                String identificacion = JOptionPane.showInputDialog("Ingrese la nueva identificacion del cliente: ");
-                clientes.get(i).setIdentificacion(identificacion);
-                JOptionPane.showMessageDialog(null, "Registrado correctamente");
-
-            }
-        }
-        break;
-
-        case 3:
-        for(int i=0; i<clientes.size(); i++){
-            if(clientes.get(i).getNumeroCliente()== num){
-                String pedido = JOptionPane.showInputDialog("Ingrese el nuevo pedido del cliente: ");
-                clientes.get(i).setPedido(pedido);
-                JOptionPane.showMessageDialog(null, "Registrado correctamente");
-
-            }
-        }
-        break;
-
-        }*/
+        ControladorEmpleados.modificar(model, tablaEmpleados, jTextField4, jTextField1, jTextField2, jTextField3, jPasswordField1);
+        ControladorEmpleados.listar(model, tablaEmpleados);
+        ControladorEmpleados.nuevo(jTextField1, jTextField2, jTextField3, jTextField4, jPasswordField1);
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void tablaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMouseClicked
@@ -268,155 +245,37 @@ public class CrudEmpleado extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "No se Selecciono");
         } else {
             
-            
             String nombre = (String) tablaEmpleados.getValueAt(row, 1);
             String cedula = (String) tablaEmpleados.getValueAt(row, 2);
-            String correo = (String) tablaEmpleados.getValueAt(row, 3);
-            
-            
+            String correo = (String) tablaEmpleados.getValueAt(row, 4);
+            String idTipoUsuario = (String) tablaEmpleados.getValueAt(row, 3); 
             
             jTextField1.setText(nombre);
             jTextField2.setText(cedula);
             jTextField3.setText(correo);
+            jTextField4.setText(idTipoUsuario);
             
         }
 
     }//GEN-LAST:event_tablaEmpleadosMouseClicked
-    void listar(){
-        String sql = "select * from empleados";
-        try {
-            con = cn.getConnection();
-            st = con.createStatement();
-            rs = st.executeQuery(sql);
-            Object[] empleado = new Object[4];
-            model = (DefaultTableModel) tablaEmpleados.getModel();
-            while (rs.next()) {
-                empleado[0] = rs.getInt("idEmpleado");
-                empleado[1] = rs.getString("nombreEmpleado");
-                empleado[2] = rs.getString("cedulaEmpleado");
-                empleado[3] = rs.getString("correoEmpleado");
-                
-                model.addRow(empleado);
-            }
-            tablaEmpleados.setModel(model);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al listar los empleados: " +e);
-        }
-    }
-    
-    void Agregar(){
-        
-        String nombre = jTextField1.getText().trim();
-        String cedula = jTextField2.getText().trim();
-        String correo = jTextField3.getText().trim();
-        String contraseña = jPasswordField1.getText().trim();
-       
-        try {
-            if(nombre.isEmpty() || cedula.isEmpty() || correo.isEmpty() || contraseña.isEmpty()){
-                JOptionPane.showMessageDialog(null, "Llena todos los datos");
-                limpiarTabla(model);
-            } else {
-                
-                //ENCRIPTAR CONTRASEÑA
-                EncriptarContraseña encriptar = new EncriptarContraseña();
-                String contraEncriptada = encriptar.getMd5Hash(contraseña);
-                
-                String sql = "insert into empleados(nombreEmpleado, cedulaEmpleado, correoEmpleado, contraseña) VALUES('" + nombre + "','" + cedula +"','" + correo +"','" + contraEncriptada + "')";
-                con = cn.getConnection();
-                st = con.createStatement();
-                st.executeUpdate(sql);
-                JOptionPane.showMessageDialog(null, "Empleado registrado con exito");
-                
-                limpiarTabla(model);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al agregar el empleado: " +e);
-        }
-    }
-    
-    void modificar(){
-        String nombre = jTextField1.getText().trim();
-        String cedula = jTextField2.getText().trim();
-        String correo = jTextField3.getText().trim();
-        String contraseña = jPasswordField1.getText().trim();
-        
-        EncriptarContraseña encriptar = new EncriptarContraseña();
-        String contraEncriptada = encriptar.getMd5Hash(contraseña);
-        
-        int fila = tablaEmpleados.getSelectedRow();
-        int id = (int) tablaEmpleados.getValueAt(fila, 0);
-       
-        
-        String sql = "update empleados set nombreEmpleado='" + nombre + "', cedulaEmpleado='" + cedula + "', correoEmpleado='" + correo + "', contraseña='" + contraEncriptada + "' where idEmpleado=" + id;
 
-        try {
-            
-            
-            
-            if (nombre != null || cedula != null || correo != null || contraseña != null ){
-               
-                con = cn.getConnection();
-                st = con.createStatement();
-                st.executeUpdate(sql);
-                JOptionPane.showMessageDialog(null, "Empleado Modificado");
-                limpiarTabla(model); //AQUI SALE UN ERROR PERO SI EJECUTA LA OPERACION
-            } else {
-                JOptionPane.showMessageDialog(null, "Error");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al modificar el empleado: " +e);
-        }
-    }
+    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField4ActionPerformed
     
-    void eliminar(){
-        int fila = tablaEmpleados.getSelectedRow();
-        int id = (int) tablaEmpleados.getValueAt(fila, 0);
-        String sql = "delete from empleados where idEmpleado=" + id;
- 
-        if(fila<0){
-            JOptionPane.showMessageDialog(null,"Selecciona un empleado");
-        } else {
-            try {
-                con = cn.getConnection();
-                st = con.createStatement();
-                st.executeUpdate(sql);
-                JOptionPane.showMessageDialog(null, "Empleado eliminado");
-                limpiarTabla(model);
-                
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Error al eliminar el empleado: " +e);
-            }
-        }
-    }
     
-    void nuevo(){
-        jTextField1.setText("");
-        jTextField2.setText("");
-        jTextField3.setText("");
-        jPasswordField1.setText("");
-        jTextField1.requestFocus();
-    }
-    
-    void limpiarTabla(DefaultTableModel model) {
-        while (model.getRowCount() > 0) {
-            model.removeRow(0);
-        }
-    }
-
-    
-    void Actualizar(){
-        limpiarTabla(model);
-        listar();
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton5;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
@@ -425,6 +284,7 @@ public class CrudEmpleado extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     private javax.swing.JTable tablaEmpleados;
     // End of variables declaration//GEN-END:variables
 }
